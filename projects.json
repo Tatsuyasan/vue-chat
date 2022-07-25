@@ -1,0 +1,163 @@
+{
+  "tao": {
+    "name": "TAO",
+    "environments": {
+      "SANDBOX": {
+        "ip": "35.180.235.164",
+        "branch": "dev",
+        "sshArguments": " ",
+        "deployTag": "SANDBOX"
+      },
+      "RECETTE": {
+        "ip": "15.236.72.168",
+        "branch": "master",
+        "sshArguments": "-o StrictHostKeyChecking=no ",
+        "deployTag": "PREPROD"
+      }
+    }
+  },
+
+  "kaporal": {
+    "name": "KAPORAL",
+    "environments": {
+      "SANDBOX": {
+        "ip": "15.188.149.36",
+        "branch": "dev",
+        "sshArguments": " ",
+        "deployTag": "SANDBOX"
+      },
+      "RECETTE": {
+        "ip": "15.188.130.49",
+        "branch": "master",
+        "sshArguments": "-o StrictHostKeyChecking=no ",
+        "deployTag": "PREPROD"
+      }
+    }
+  },
+
+  "redoute": {
+    "name": "LAREDOUTE",
+    "environments": {
+      "SANDBOX": {
+        "ip": "52.47.178.225",
+        "branch": "dev",
+        "sshArguments": " ",
+        "deployTag": "SANDBOX"
+      },
+      "RECETTE": {
+        "ip": "35.180.220.38",
+        "branch": "master",
+        "sshArguments": "-o StrictHostKeyChecking=no ",
+        "deployTag": "PREPROD"
+      }
+    }
+  },
+
+  "orchestra": {
+    "name": "ORCHESTRA",
+    "environments": {
+      "SANDBOX": {
+        "ip": "15.236.63.184",
+        "branch": "dev",
+        "sshArguments": " ",
+        "deployTag": "SANDBOX"
+      },
+      "RECETTE": {
+        "ip": "13.36.27.175",
+        "branch": "master",
+        "sshArguments": "-o StrictHostKeyChecking=no ",
+        "deployTag": "PREPROD"
+      }
+    }
+  },
+
+  "cyrillus": {
+    "name": "CYRILLUS",
+    "environments": {
+      "SANDBOX": {
+        "ip": "15.236.245.156",
+        "branch": "dev",
+        "sshArguments": " ",
+        "deployTag": "SANDBOX"
+      },
+      "RECETTE": {
+        "ip": "15.237.129.85",
+        "branch": "master",
+        "sshArguments": "-o StrictHostKeyChecking=no ",
+        "deployTag": "PREPROD"
+      }
+    }
+  },
+
+  "thebradery": {
+    "name": "THEBRADERY",
+    "environments": {
+      "SANDBOX": {
+        "ip": "13.37.156.203",
+        "branch": "dev",
+        "sshArguments": " ",
+        "deployTag": "SANDBOX"
+      },
+      "RECETTE": {
+        "ip": "13.37.189.251",
+        "branch": "master",
+        "sshArguments": "-o StrictHostKeyChecking=no ",
+        "deployTag": "PREPROD"
+      }
+    }
+  },
+
+  "cultura": {
+    "name": "CULTURA",
+    "environments": {
+      "SANDBOX": {
+        "ip": "13.37.72.150",
+        "branch": "dev",
+        "sshArguments": " ",
+        "deployTag": "SANDBOX"
+      },
+      "RECETTE": {
+        "ip": "15.236.191.224",
+        "branch": "master",
+        "sshArguments": "-o StrictHostKeyChecking=no ",
+        "deployTag": "PREPROD"
+      }
+    }
+  },
+
+  "picwpic": {
+    "name": "PICWIC",
+    "environments": {
+      "SANDBOX": {
+        "ip": "15.236.187.203",
+        "branch": "dev",
+        "sshArguments": " ",
+        "deployTag": "SANDBOX"
+      },
+      "RECETTE": {
+        "ip": "35.181.18.85",
+        "branch": "master",
+        "sshArguments": "-o StrictHostKeyChecking=no ",
+        "deployTag": "PREPROD"
+      }
+    }
+  },
+
+  "clozen": {
+    "name": "CLOZEN",
+    "environments": {
+      "SANDBOX": {
+        "ip": "35.180.145.31",
+        "branch": "dev",
+        "sshArguments": " ",
+        "deployTag": "SANDBOX"
+      },
+      "RECETTE": {
+        "ip": "35.180.145.6",
+        "branch": "master",
+        "sshArguments": "-o StrictHostKeyChecking=no ",
+        "deployTag": "PREPROD"
+      }
+    }
+  }
+}

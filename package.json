@@ -1,0 +1,23 @@
+{
+  "name": "vue-chat",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "scripts": {
+    "front": "yarn workspace front",
+    "back": "yarn workspace back",
+    "build:back": "yarn back build"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.15.7"
+  },
+  "dependencies": {
+    "glob": "^8.0.1"
+  }
+}
