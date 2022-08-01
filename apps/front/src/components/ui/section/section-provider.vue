@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup>
 import { provide, inject } from 'vue';
 import { CONTEXT_KEYS } from '@/utils/constants';
 

@@ -6,6 +6,7 @@
     },
     "target": "esnext",
     "useDefineForClassFields": true,
+    "allowJs": true,
     "module": "esnext",
     "moduleResolution": "node",
     "strict": true,
@@ -17,6 +18,6 @@
     "lib": ["esnext", "dom"],
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "../shared/shared.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "../shared/shared.d.ts", "src/hooks/useSocket.js", "src/socket/index.js", "src/store/appStore.js"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

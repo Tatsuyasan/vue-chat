@@ -1,8 +1,7 @@
 import express from 'express';
-const routes = express.Router();
+import message from '../controllers/message.js';
+const router = express.Router();
 
-routes.get('/', (req, res) => {
-  res.status(200).json({ message: 'Ok' });
-});
+router.post('/message/:roomId', message().createMessage);
 
-export default routes;
+export default router;

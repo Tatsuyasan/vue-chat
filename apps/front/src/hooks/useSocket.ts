@@ -1,14 +1,23 @@
+import { io } from 'socket.io-client';
+import { webSocketListeners } from '@/socket';
+const socket = io(import.meta.env.VITE_API_URL);
+
+webSocketListeners(socket).init();
+
 export const useSocket = () => {
   return {
+    getSocket: () => socket,
     connect: () => {
-      console.log('connect');
+      socket.connect();
     },
     disconnect: () => {
-      console.log('disconnect');
+      socket.disconnect();
     },
     emit: (eventName: string, payload: any) => {
-      console.log('eventName => ', eventName);
-      console.log('payload => ', payload);
+      socket.emit(eventName, payload);
+    },
+    on: <T>(eventName: string, callback: (payload: T) => void) => {
+      socket.on(eventName, callback);
     }
   };
 };

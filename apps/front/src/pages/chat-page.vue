@@ -1,15 +1,20 @@
 <script lang="ts" setup>
-// import { useApp } from '@/hooks/useApp';
-import { useSocket } from '@/hooks/useSocket';
-const socket = useSocket();
+import { useStore } from '@/hooks/useStore.js';
+import { useRooms } from '@/hooks/useRooms.js';
+import { onMounted } from 'vue';
+import { defaultRoom, DEFAULT_ROOMS } from '@/utils/constants';
 
-socket.connect();
+const store = useStore();
+const { add } = useRooms();
 
-// const { user } = useApp();
+onMounted(() => {
+  add(defaultRoom);
+  store.selectRoom(DEFAULT_ROOMS.PUBLIC);
+});
 </script>
 
 <template>
-  <div class="chat-page">
+  <div class="chat-page h-screen">
     <room-view />
     <room-list />
   </div>
@@ -19,7 +24,6 @@ socket.connect();
 .chat-page {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
-  height: 100%;
 
   .room-list {
     grid-column: -4 / span 3;

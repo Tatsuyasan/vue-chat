@@ -1,18 +1,16 @@
-<script setup lang="ts">
-// import { useRouter } from 'vue-router';
-import { useAppProvider } from '@/hooks/useAppProvider';
-import { io } from 'socket.io-client';
+<script setup>
+import { useRouter } from 'vue-router';
+import { useStore } from '@/hooks/useStore';
 
-// const router = useRouter();
-const { user } = useAppProvider();
+const router = useRouter();
+const store = useStore();
 
-// if (!user.value) {
-//   router.replace({ name: 'HomePage' });
-// }
+if (!store.username) {
+  router.replace({ name: 'LoginPage' });
+}
 </script>
 
 <template>
-  <layout-header />
   <main>
     <router-view />
   </main>
@@ -26,7 +24,13 @@ html {
 *,
 *::before,
 *::after {
+  padding: 0;
+  margin: 0;
   box-sizing: inherit;
+}
+
+ul {
+  list-style: none;
 }
 
 #app {
@@ -36,8 +40,6 @@ html {
 }
 
 body {
-  margin: 0;
-  padding: 0;
   min-height: 100vh;
 }
 </style>

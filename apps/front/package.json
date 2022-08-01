@@ -10,17 +10,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@libs/shared": "*",
+    "@types/socket.io-client": "^3.0.0",
     "@vue/server-renderer": "^3.2.37",
     "@vueuse/core": "^8.7.5",
     "@vueuse/head": "^0.7.6",
+    "@vueuse/integrations": "^9.0.0",
     "dotenv": "^16.0.1",
+    "nanoid": "^4.0.0",
+    "pinia": "^2.0.17",
     "socket.io-client": "^4.5.1",
+    "universal-cookie": "^4.0.4",
     "vitedge": "^0.19.0",
     "vue": "^3.2.25",
     "vue-i18n": "9",
     "vue-query": "^1.25.2",
-    "vue-router": "^4.1.0",
-    "@lib/shared": "*"
+    "vue-router": "^4.1.0"
   },
   "devDependencies": {
     "@types/node": "^18.0.1",

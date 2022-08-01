@@ -1,7 +1,9 @@
-import routes from './src/routes/index.js';
+import router from './src/routes/index.js';
 import Message from './src/models/Message.js';
 import WebSocket from './src/models/WebSocket.js';
 import webSocketApi from './src/socket/index.js';
+import cors from 'cors';
+import 'dotenv/config';
 
 import express from 'express';
 import http from 'http';
@@ -9,46 +11,14 @@ import http from 'http';
 const app = express();
 const httpServer = http.createServer(app);
 const webSocket = new WebSocket(httpServer, {
-  cors: { origin: 'http://localhost:3000' }
+  cors: { origin: '*', methods: ['GET', 'POST'] }
 });
 
-app.use('/', routes);
+app.use(cors());
+app.use(express.json());
+app.use('/api', router);
 
-class Command {
-  constructor(name, description) {
-    (this.name = name), (this.description = description);
-  }
-}
-
-let chat = {
-  maxMessage: 100,
-  messages: []
-};
-
-//List of connected users
-let users = [];
-
-//List commands
-let commands = {
-  help: new Command('help', getAllCommandsHelp(this)),
-  rename: new Command(
-    'rename',
-    '/rename <name> - name length between 3 to 20 characters'
-  ),
-  color: new Command(
-    'color',
-    '/color <color> - Any color code (rgb, rgba, hex, hsl...), if the code is not valid the color will be black'
-  ),
-  roll: new Command(
-    'roll',
-    '/roll <max_value> - Will roll a dice between 1 & max_value'
-  )
-};
-
-//List of chat users
-const chatUsers = [];
-
-webSocketApi(webSocket).init();
+export const io = webSocketApi().init(webSocket);
 
 //USER CONNECT
 // webSocket.on('connection', (socket, io) => {
@@ -194,81 +164,81 @@ webSocketApi(webSocket).init();
 //   });
 // });
 
-function getUserNames() {
-  let usernames = [];
-  chatUsers.forEach(user => {
-    usernames.push({ name: user.name });
-  });
-  return usernames;
-}
+// function getUserNames() {
+//   let usernames = [];
+//   chatUsers.forEach(user => {
+//     usernames.push({ name: user.name });
+//   });
+//   return usernames;
+// }
 /**
  * Check the message array size before adding a new one
  * If the size is higher than the max, shift the first message
  * then add the new one
  */
-function addNewMessage(message, user) {
-  //Add his message to the chat
-  let messageAdded = new Message(message, user);
+// function addNewMessage(message, user) {
+//   //Add his message to the chat
+//   let messageAdded = new Message(message, user);
 
-  //If messages array has reached its limit, remove the last message
-  //Prevents memory overload
-  if (chat.messages.length >= chat.maxMessage) {
-    chat.messages.shift();
-  }
-  //Then add the new one
-  chat.messages.push(messageAdded);
+//   //If messages array has reached its limit, remove the last message
+//   //Prevents memory overload
+//   if (chat.messages.length >= chat.maxMessage) {
+//     chat.messages.shift();
+//   }
+//   //Then add the new one
+//   chat.messages.push(messageAdded);
 
-  console.log(messageAdded.user, ' ', messageAdded.content);
+//   console.log(messageAdded.user, ' ', messageAdded.content);
 
-  //Broadcast message to everyone
-  webSocket.emit('newMessage', messageAdded);
-}
+//   //Broadcast message to everyone
+//   webSocket.emit('newMessage', messageAdded);
+// }
 
-function getUser(users, socketID) {
-  users.forEach(user => {
-    if (user.id == socketID) {
-      return user;
-    }
-  });
-  console.error('No user found with that ID:', socketID);
-  return null;
-}
+// function getUser(users, socketID) {
+//   users.forEach(user => {
+//     if (user.id == socketID) {
+//       return user;
+//     }
+//   });
+//   console.error('No user found with that ID:', socketID);
+//   return null;
+// }
 
-function getUserIndex(users, socketID) {
-  for (let i = 0; i < users.length; i++) {
-    if (users[i].id == socketID) return i;
-  }
-  console.error('No user found with that ID:', socketID);
-  return null;
-}
+// function getUserIndex(users, socketID) {
+//   for (let i = 0; i < users.length; i++) {
+//     if (users[i].id == socketID) return i;
+//   }
+//   console.error('No user found with that ID:', socketID);
+//   return null;
+// }
 
-function removeUser(users, socketID) {
-  return users.splice(getUserIndex(users, socketID), 1);
-}
+// function removeUser(users, socketID) {
+//   return users.splice(getUserIndex(users, socketID), 1);
+// }
 
-function randomColor(light) {
-  return `hsl(${Math.floor(Math.random() * 360)}, 100%, ${light}%)`;
-}
+// function randomColor(light) {
+//   return `hsl(${Math.floor(Math.random() * 360)}, 100%, ${light}%)`;
+// }
 
-function isNumber(value) {
-  return !isNaN(parseInt(value)) && isFinite(value);
-}
+// function isNumber(value) {
+//   return !isNaN(parseInt(value)) && isFinite(value);
+// }
 
-function changeUsername(user, newName) {
-  if (newName.length >= 3 && newName.length <= 20) {
-    user.name = newName;
-  } else {
-    throw new Error('New name dimensions are incorrect.');
-  }
-}
+// function changeUsername(user, newName) {
+//   if (newName.length >= 3 && newName.length <= 20) {
+//     user.name = newName;
+//   } else {
+//     throw new Error('New name dimensions are incorrect.');
+//   }
+// }
 
-function getAllCommandsHelp(commands) {
-  let result = '';
-  for (let prop in commands) {
-    if (prop != 'help') result += commands[prop].description + '\n';
-  }
-  return result;
-}
+// function getAllCommandsHelp(commands) {
+//   let result = '';
+//   for (let prop in commands) {
+//     if (prop != 'help') result += commands[prop].description + '\n';
+//   }
+//   return result;
+// }
 
 // Starts the server.
 httpServer.listen(5001, '0.0.0.0', function () {

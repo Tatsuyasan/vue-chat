@@ -1,4 +1,4 @@
-import { SOCKET_EVENT } from '~shared';
+import { SOCKET_EVENT } from '@libs/shared';
 
 const disconnectHandler = (socket, io) => {
   const disconnect = () => {

@@ -1,19 +1,16 @@
 import { nanoid } from 'nanoid';
-import { DEFAULT_ROOMS } from '../utils/constants.js';
-import { activeRooms } from '../store/index.js';
 
 import Room from '../models/Room.js';
-import { SOCKET_EVENT } from '~shared';
+import { activeRooms } from '../store/index.js';
+import { SOCKET_EVENT } from '@libs/shared';
 
 const roomHandler = (socket, io) => {
-  const joinDefaultRoom = () => {
-    DEFAULT_ROOMS.forEach(roomName => {
-      const room = new Room(nanoid(), roomName, []);
-      activeRooms.push(room);
-      socket.join(room.name);
-      console.log(`connecting to room ${room.name}`);
-    });
-    socket.emit('user:joined');
+  const joinRoom = ({ room, user }) => {
+    room = new Room({ id: room.id, name: room.name, messages: [] });
+    socket.join(room.id);
+
+    console.log('joinRoom || server');
+    socket.to(room.id).emit(SOCKET_EVENT.USER_JOINROOM, user);
   };
 
   const leaveRoom = roomName => {
@@ -21,13 +18,14 @@ const roomHandler = (socket, io) => {
     socket.to(roomName).emit('user left ', socket.id);
   };
 
-  const newMessage = payload => {
-    console.log('le nouveau message ==> ', payload);
-  };
+  // const newMessage = payload => {
+  //   socket.to(payload.room).emit(SOCKET_EVENT.ROOM_NEWMESSAGE, payload);
+  //   console.log('le nouveau message ==> ', payload);
+  // };
 
-  // socket.on('rooms:default', joinDefaultRoom);
+  socket.on(SOCKET_EVENT.ROOM_JOIN, joinRoom);
   socket.on(SOCKET_EVENT.USER_LEAVEROOM, leaveRoom);
-  socket.on(SOCKET_EVENT.USER_NEWMESSAGE, newMessage);
+  // socket.on(SOCKET_EVENT.USER_NEWMESSAGE, newMessage);
 };
 
 export default roomHandler;
