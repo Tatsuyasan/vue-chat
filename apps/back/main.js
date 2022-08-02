@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api', router);
 
-export const io = webSocketApi().init(webSocket);
+export const io = webSocketApi(webSocket).init();
 
 //USER CONNECT
 // webSocket.on('connection', (socket, io) => {

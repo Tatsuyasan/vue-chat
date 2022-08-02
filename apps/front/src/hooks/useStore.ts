@@ -19,9 +19,11 @@ export const useStore = defineStore('app', () => {
     return rooms.value.find((r) => r.id === selectedRoomId.value);
   });
 
-  const currentMessages: ComputedRef<Message[] | undefined> = computed(() => {
-    return currentRoom.value?.messages;
-  });
+  const currentRoomMessages: ComputedRef<Message[] | undefined> = computed(
+    () => {
+      return currentRoom.value?.messages;
+    }
+  );
 
   const currentUser: ComputedRef<User | undefined> = computed(() => {
     return user.value;
@@ -75,7 +77,7 @@ export const useStore = defineStore('app', () => {
     // getters
     currentRoom,
     currentUser,
-    currentMessages,
+    currentRoomMessages,
 
     // actions
     selectRoom,

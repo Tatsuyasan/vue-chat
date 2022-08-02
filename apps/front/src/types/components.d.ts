@@ -8,10 +8,14 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AppProvider: typeof import('./../components/app-provider.vue')['default']
+    Avatar: typeof import('./../components/user/avatar.vue')['default']
     Header: typeof import('./../components/layout/header.vue')['default']
+    HeaderRoomList: typeof import('./../components/header/header-room-list.vue')['default']
+    HeaderRoomView: typeof import('./../components/header/header-room-view.vue')['default']
     HelloWorld: typeof import('./../components/HelloWorld.vue')['default']
     InputText: typeof import('./../components/ui/input/input-text.vue')['default']
     LayoutHeader: typeof import('./../components/layout/layout-header.vue')['default']
+    MessageLayout: typeof import('./../components/room/message/message-layout.vue')['default']
     Nav: typeof import('./../components/layout/nav.vue')['default']
     RoomList: typeof import('./../components/room/list/room-list.vue')['default']
     RoomView: typeof import('./../components/room/view/room-view.vue')['default']
@@ -20,6 +24,7 @@ declare module '@vue/runtime-core' {
     SectionHeading: typeof import('./../components/ui/section/section-heading/section-heading.vue')['default']
     SectionProvider: typeof import('./../components/ui/section/section-provider.vue')['default']
     SocketProvider: typeof import('./../components/socket-provider.vue')['default']
+    UserList: typeof import('./../components/room/list/user-list.vue')['default']
     UserProfileProvider: typeof import('./../components/user/user-profile-provider.vue')['default']
   }
 }

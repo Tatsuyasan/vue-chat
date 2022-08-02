@@ -4,7 +4,8 @@ import { computed } from 'vue';
 const emit = defineEmits(['update:modelValue']);
 const props = defineProps({
   modelValue: { type: [String, Number], default: null },
-  readonly: { type: Boolean, default: false }
+  readonly: { type: Boolean, default: false },
+  placeholder: { type: String, default: 'Enter a text' }
 });
 
 const model = computed({
@@ -21,7 +22,7 @@ const model = computed({
   <div class="">
     <input
       v-model="model"
-      class="border-gray-300 focus:border-gray-600 border-solid"
+      :placeholder="placeholder"
       v-bind="$attrs"
       :readonly="props.readonly"
     />
@@ -30,8 +31,16 @@ const model = computed({
 
 <style lang="scss" scoped>
 input {
+  border: none;
+  border-radius: 5px;
+  min-height: 40px;
+  background-color: var(--background-300);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  color: var(--color-text-primary);
+
   &:focus {
     outline: none;
+    border: 1px solid var(--background-500);
   }
 }
 </style>

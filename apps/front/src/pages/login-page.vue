@@ -19,18 +19,17 @@ const goToChatPage = () => {
 </script>
 
 <template>
-  <div class="flex justify-center items-center h-screen">
+  <div class="login-page flex justify-center items-center h-screen">
     <div class="p-10 flex flex-col bg-gray-400">
       <section-provider>
-        <section-heading class="mb-4">Login</section-heading>
+        <section-heading class="mb-10">Connectez vous ...</section-heading>
 
         <form @submit.prevent="goToChatPage()">
-          <label class="mb-4" for="username">Pseudo</label>
           <input-text
             v-model="username"
-            id="username"
             class="mb-4"
             name="name"
+            placeholder="Pseudo"
             required
             type="text"
             @keypress.enter="goToChatPage()"
@@ -42,7 +41,7 @@ const goToChatPage = () => {
               :to="{ name: 'ChatPage' }"
               type="submit"
             >
-              <span class="color-green-200">valider</span>
+              <span>valider</span>
             </button>
           </div>
         </form>
@@ -51,7 +50,24 @@ const goToChatPage = () => {
   </div>
 </template>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.login-page {
+  background-color: var(--background-700);
+
+  > div {
+    background-color: var(--background-500);
+  }
+
+  button {
+    background-color: var(--background-300);
+    color: var(--color-text-primary);
+
+    &:hover {
+      background-color: var(--background-400);
+    }
+  }
+}
+</style>
 
 <route lang="json">
 {

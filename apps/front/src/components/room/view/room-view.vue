@@ -9,12 +9,13 @@ const currentMessage = ref('');
 
 const submit = () => {
   const { currentUser, currentRoom } = store;
-  if (!currentUser || !currentRoom) return;
+  const messageTrimed = currentMessage.value.trim();
+  if (!currentUser || !currentRoom || !messageTrimed) return;
 
   try {
     const message = new Message({
       author: currentUser,
-      content: currentMessage.value
+      content: messageTrimed
     });
     const roomId = currentRoom.id;
 
@@ -37,25 +38,19 @@ const submit = () => {
 <template>
   <section class="room-view">
     <div>
-      <section-provider>
-        <section-heading class="mb-4 text-center">
-          {{ store.currentRoom?.name }}
-        </section-heading>
-      </section-provider>
       <ul>
-        <li v-for="(message, index) in store.currentMessages" :key="index">
-          <span v-if="message.author">{{ message.author?.username }} :</span>
-          {{ message.content }}
+        <li v-for="(message, index) in store.currentRoomMessages" :key="index">
+          <message-layout :message="message" />
         </li>
       </ul>
-      <form class="view-form p-5 flex" @submit.prevent="submit">
+      <div class="view-form p-5 flex">
         <input-text
           v-model="currentMessage"
-          class="flex-grow-1 w-full p-1"
+          class="flex-grow-1 w-full"
           type="textearea"
+          @keyup.stop.enter="submit"
         />
-        <button>Envoyer</button>
-      </form>
+      </div>
     </div>
   </section>
 </template>
@@ -65,9 +60,12 @@ const submit = () => {
     display: flex;
     flex-flow: column nowrap;
     min-height: 100%;
+    max-height: 10vh;
   }
   ul {
     flex-grow: 1;
+    overflow: auto;
+    padding: var(--spacing-md) var(--spacing-lg);
   }
 }
 </style>
