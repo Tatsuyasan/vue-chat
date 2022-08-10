@@ -10,13 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@libs/shared": "*",
     "@types/socket.io-client": "^3.0.0",
     "@vue/server-renderer": "^3.2.37",
     "@vueuse/core": "^8.7.5",
     "@vueuse/head": "^0.7.6",
     "@vueuse/integrations": "^9.0.0",
-    "dotenv": "^16.0.1",
+    "date-fns": "^2.29.1",
+    "shared": "*",
     "nanoid": "^4.0.0",
     "pinia": "^2.0.17",
     "socket.io-client": "^4.5.1",

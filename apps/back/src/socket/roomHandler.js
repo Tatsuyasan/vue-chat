@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid';
 
 import Room from '../models/Room.js';
 import { activeRooms } from '../store/index.js';
-import { SOCKET_EVENT } from '@libs/shared';
+import { SOCKET_EVENT } from 'shared';
 
 const roomHandler = (socket, io) => {
   const joinRoom = ({ room, user }) => {

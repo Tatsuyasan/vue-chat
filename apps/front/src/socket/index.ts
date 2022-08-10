@@ -1,20 +1,19 @@
 import { useStore } from '@/hooks/useStore';
-import Message from '@/models/Message';
-import User from '@/models/User';
-import { SOCKET_EVENT } from '@libs/shared';
+import { SOCKET_EVENT } from 'shared';
 import { Socket } from 'socket.io-client';
+import { Message, User } from '@/types/app';
 
-const { createMessageToCurrentRoom } = useStore();
+const { createUserMessageToCurrentRoom, createAutoMessageToCurrentRoom } =
+  useStore();
 
 export const webSocketListeners = (socket: Socket) => {
   const roomHasNewMessage = (message: Message) => {
-    createMessageToCurrentRoom(message);
+    createUserMessageToCurrentRoom(message);
   };
 
-  const roomHasNewUser = (user: User) => {
-    createMessageToCurrentRoom({
-      content: `${user.username} has joined the room`
-    });
+  const roomHasNewUser = (username: User['username']) => {
+    if (!username) return;
+    createAutoMessageToCurrentRoom(`${username} has joined the room`);
   };
 
   return {

@@ -6,13 +6,14 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "apps/*",
-      "libs/*"
+      "apps/*"
     ]
   },
   "scripts": {
     "front": "yarn workspace front",
     "back": "yarn workspace back",
+    "shared": "yarn workspace shared",
+    "api": "yarn workspace api",
     "build:back": "yarn back build"
   },
   "devDependencies": {

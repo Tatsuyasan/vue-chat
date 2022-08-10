@@ -40,7 +40,7 @@ const submit = () => {
     <div>
       <ul>
         <li v-for="(message, index) in store.currentRoomMessages" :key="index">
-          <message-layout :message="message" />
+          <message-layout :index="index" :message="message" />
         </li>
       </ul>
       <div class="view-form p-5 flex">
@@ -65,7 +65,7 @@ const submit = () => {
   ul {
     flex-grow: 1;
     overflow: auto;
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding-top: var(--spacing-md);
   }
 }
 </style>

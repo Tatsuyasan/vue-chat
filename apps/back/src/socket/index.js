@@ -1,6 +1,6 @@
 import roomHandler from './roomHandler.js';
 import disconnectHandler from './disconnectHandler.js';
-import { SOCKET_EVENT } from '@libs/shared';
+import { SOCKET_EVENT } from 'shared';
 import { useSocket } from '../hooks/useSocket.js';
 
 const webSocketApi = ({ io }) => {

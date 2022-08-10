@@ -20,7 +20,7 @@ if (!store.username) {
 
 <style lang="scss">
 html {
-  box-sizing: border-box;
+  font-family: 'Noto, Helvetica, Arial, sans-serif';
 }
 
 :root {
@@ -57,7 +57,7 @@ html {
   --spacing-sm: calc(0.75 * var(--spacing-unit));
   --spacing-md: calc(1 * var(--spacing-unit));
   --spacing-lg: calc(1.75 * var(--spacing-unit));
-  --spacing-xl: calc(3 * var(--spacing-unit));
+  --spacing-xl: calc(2.5 * var(--spacing-unit));
   --spacing-xxl: calc(5 * var(--spacing-unit));
   --spacing-3xl: calc(7.5 * var(--spacing-unit));
 }
@@ -67,7 +67,7 @@ html {
 *::after {
   padding: 0;
   margin: 0;
-  box-sizing: inherit;
+  box-sizing: border-box;
   color: var(--color-secondary);
 }
 

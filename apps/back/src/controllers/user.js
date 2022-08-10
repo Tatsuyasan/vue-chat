@@ -1,16 +1,17 @@
 import { SOCKET_EVENT } from 'shared';
 import { useSocket } from '../hooks/useSocket.js';
 
-const messageController = () => {
+const userController = () => {
   return {
-    createMessage: (req, res, next) => {
+    getUser: async (req, res, next) => {
       const roomId = req.params.roomId;
-      const message = req.body;
       try {
         const { io } = useSocket();
-        io.to(roomId).emit(SOCKET_EVENT.ROOM_NEWMESSAGE, message);
-        res.sendStatus(201);
-        next();
+
+        // console.log(io.to(roomId).allSockets());
+        const users = await io.to(roomId).allSockets();
+        console.log({ ...users });
+        res.json({ users: { ...users } });
       } catch (e) {
         console.error(e);
         res.sendStatus(500) && next(e);
@@ -19,4 +20,4 @@ const messageController = () => {
   };
 };
 
-export default messageController;
+export default userController;

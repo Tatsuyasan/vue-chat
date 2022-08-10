@@ -6,7 +6,7 @@ webSocketListeners(socket).init();
 
 export const useSocket = () => {
   return {
-    getSocket: () => socket,
+    socket: socket,
     connect: () => {
       socket.connect();
     },

@@ -1,20 +1,20 @@
-// import { Ref } from 'vue';
+import {
+  Prisma,
+  User as UserPrisma,
+  Message as MessagePrisma
+} from '@prisma/client';
 
-import Message from '@/models/Message';
-import User from '@/models/User';
+export type Room = Prisma.RoomGetPayload<{
+  include: { messages: true; users: true };
+}>;
 
-// export type AppContext = {
-//   user: Ref<string | undefined>;
-//   messages: Ref<string[]>;
-// };
+export type Message = MessagePrisma;
+
+export type User = UserPrisma;
 
 export type PrivateRoomOptions = {
   id: string;
   name: string;
   users: User[];
   messages: Message[];
-};
-
-export type SupervisorMessage = {
-  content: string;
 };

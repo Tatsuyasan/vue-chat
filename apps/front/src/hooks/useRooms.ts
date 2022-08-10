@@ -1,7 +1,7 @@
 import { useSocket } from './useSocket';
-import { SOCKET_EVENT } from '@libs/shared';
+import { SOCKET_EVENT } from 'shared';
 import { useStore } from './useStore';
-import Room from '@/models/Room';
+import { Room } from '@/types/app';
 
 export const useRooms = () => {
   const socket = useSocket();
@@ -12,12 +12,18 @@ export const useRooms = () => {
       const roomHadAlreadyJoined = store.rooms.some((r) => r.id === room.id);
       if (!roomHadAlreadyJoined) {
         store.addRoom(room);
-        socket.emit(SOCKET_EVENT.ROOM_JOIN, { room, user: store.currentUser });
+        socket.emit(SOCKET_EVENT.ROOM_JOIN, {
+          roomId: room.id,
+          userId: store.currentUser?.id
+        });
       }
     },
     add: (room: Room) => {
       store.addRoom(room);
-      socket.emit(SOCKET_EVENT.ROOM_JOIN, { room, user: store.currentUser });
+      socket.emit(SOCKET_EVENT.ROOM_JOIN, {
+        roomId: room.id,
+        userId: store.currentUser?.id
+      });
     }
   };
 };

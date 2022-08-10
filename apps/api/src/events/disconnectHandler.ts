@@ -1,14 +1,12 @@
 import { SOCKET_EVENT } from 'shared';
-import { useSocket } from '../hooks/useSocket.js';
+import { SocketEventFn } from '../types/index.js';
 
-const disconnectHandler = (socket, io) => {
+const disconnectHandler: SocketEventFn = socket => {
   const disconnect = () => {
     console.log('disconnected');
   };
 
   const disconnecting = () => {
-    const { deleteSocket } = useSocket();
-    deleteSocket(socket.id);
     console.log('disconnecting........');
   };
   socket.on(SOCKET_EVENT.DISCONNECT, disconnect);

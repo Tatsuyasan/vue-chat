@@ -1,10 +1,8 @@
 import { defineStore } from 'pinia';
 import { ref, computed, ComputedRef } from 'vue';
 import { useCookies } from '@vueuse/integrations/useCookies';
-import Room from '@/models/Room';
-import User from '@/models/User';
-import { PrivateRoomOptions, SupervisorMessage } from '@/types/app';
-import Message from '@/models/Message';
+import { Message, Room, User } from '@/types/app';
+import { nanoid } from 'nanoid';
 
 const userCookies = useCookies(['username']);
 
@@ -33,9 +31,9 @@ export const useStore = defineStore('app', () => {
     selectedRoomId.value = roomId;
   };
 
-  const login = (name: string) => {
-    user.value = new User({ username: name });
-    userCookies.set('username', name);
+  const login = ({ username, socketId, id }: User) => {
+    user.value = { username, socketId, id };
+    userCookies.set('username', user.value);
   };
 
   const logout = () => {
@@ -46,22 +44,27 @@ export const useStore = defineStore('app', () => {
     rooms.value.push(room);
   };
 
-  const addPrivateRoom = (room: PrivateRoomOptions) => {
-    addRoom(
-      new Room({
-        id: room.id,
-        name: room.name,
-        users: room.users,
-        isClosable: true,
-        isPrivateRoom: true,
-        hasUnreadMessage: false,
-        messages: room.messages ? room.messages : []
-      })
-    );
+  const addPrivateRoom = (room: Room) => {
+    addRoom({
+      id: room.id,
+      name: room.name,
+      users: room.users,
+      messages: room.messages ? room.messages : []
+    });
   };
 
-  const createMessageToCurrentRoom = (message: Message | SupervisorMessage) => {
+  const createUserMessageToCurrentRoom = (message: Message) => {
     currentRoom.value?.messages.push(message);
+  };
+
+  const createAutoMessageToCurrentRoom = (content: string) => {
+    currentRoom.value?.messages.push({
+      id: nanoid(),
+      content,
+      dateCreated: new Date(),
+      authorId: null,
+      roomId: currentRoom.value.id
+    });
   };
 
   const removeRoom = (room: Room) => {
@@ -87,6 +90,7 @@ export const useStore = defineStore('app', () => {
     removeRoom,
     getRoomById,
     addPrivateRoom,
-    createMessageToCurrentRoom
+    createUserMessageToCurrentRoom,
+    createAutoMessageToCurrentRoom
   };
 });
