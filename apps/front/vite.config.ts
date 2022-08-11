@@ -23,7 +23,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': `${__dirname}/src`
+      '@': `${__dirname}/src`,
+      shared: `${__dirname}/../../node_modules/shared/dist/esm/index.js`
     }
   }
 });

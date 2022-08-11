@@ -17,11 +17,9 @@ export const useStore = defineStore('app', () => {
     return rooms.value.find((r) => r.id === selectedRoomId.value);
   });
 
-  const currentRoomMessages: ComputedRef<Message[] | undefined> = computed(
-    () => {
-      return currentRoom.value?.messages;
-    }
-  );
+  const currentRoomMessages = computed(() => {
+    return currentRoom.value?.messages;
+  }) as ComputedRef<Message[] | undefined>;
 
   const currentUser: ComputedRef<User | undefined> = computed(() => {
     return user.value;
@@ -33,7 +31,20 @@ export const useStore = defineStore('app', () => {
 
   const login = ({ username, socketId, id }: User) => {
     user.value = { username, socketId, id };
+    console.log('user.value ==> ', user.value);
     userCookies.set('username', user.value);
+    try {
+      fetch(`http://localhost:5001/api/user`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user.value)
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const logout = () => {

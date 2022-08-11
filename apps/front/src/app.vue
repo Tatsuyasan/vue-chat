@@ -1,11 +1,11 @@
-<script setup>
+<script lang="ts" setup>
 import { useRouter } from 'vue-router';
 import { useStore } from '@/hooks/useStore';
 
 const router = useRouter();
 const store = useStore();
 
-if (!store.username) {
+if (!store.currentUser) {
   router.replace({ name: 'LoginPage' });
 }
 </script>

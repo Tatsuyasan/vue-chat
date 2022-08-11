@@ -14,13 +14,13 @@ const port: number = parseInt(process.env.PORT as string);
 const httpServer: Server = http.createServer(app);
 io.attach(httpServer);
 
-app.get('/', (req, res) => {
-  res.send('Express + TypeScript Server');
-});
-
 app.use(cors());
 app.use(express.json());
 app.use('/api', router);
+
+app.get('/', (req, res) => {
+  res.send('Express + TypeScript Server');
+});
 
 initSocketEvents();
 

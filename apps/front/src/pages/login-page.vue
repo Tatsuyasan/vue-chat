@@ -1,19 +1,29 @@
-<script setup>
+<script lang="ts" setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '@/hooks/useStore';
 import { useSocket } from '@/hooks/useSocket';
+import { User } from '@/types/app';
+import { nanoid } from 'nanoid';
+
+const socket = useSocket();
+const { connect } = useSocket();
 
 const store = useStore();
 const router = useRouter();
 
-const { connect } = useSocket();
 const { login } = store;
 const username = ref('');
 
 const goToChatPage = () => {
-  login(username.value);
-  connect();
+  const user: User = {
+    id: nanoid(),
+    username: username.value,
+    socketId: socket.socket.id
+  };
+
+  login(user);
+  socket.connect();
   router.replace({ name: 'ChatPage' });
 };
 </script>
@@ -37,7 +47,7 @@ const goToChatPage = () => {
           <div class="flex justify-center">
             <button
               class="bg-green-600 cursor-pointer hover:bg-green-700 p-y-2 p-x-4 no-underline"
-              :disabled="store.user"
+              :disabled="!!store.user"
               :to="{ name: 'ChatPage' }"
               type="submit"
             >

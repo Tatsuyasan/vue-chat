@@ -1,11 +1,11 @@
-import { User } from '@prisma/client';
+import { Prisma, Room } from '@prisma/client';
 import prisma from '../prisma/prisma';
 import { RequestHandler } from 'express';
 
 export const read: RequestHandler = async (req, res, next) => {
   const id = req.params.id;
   try {
-    await prisma.user.findUnique({
+    await prisma.room.findUnique({
       where: {
         id: id
       }
@@ -17,11 +17,11 @@ export const read: RequestHandler = async (req, res, next) => {
 };
 
 export const create: RequestHandler = async (req, res, next) => {
-  const user: User = req.body;
+  const room: Room = req.body;
 
   try {
-    await prisma.user.create({
-      data: user
+    await prisma.room.create({
+      data: room
     });
   } catch (e) {
     console.error(e);
@@ -30,15 +30,15 @@ export const create: RequestHandler = async (req, res, next) => {
 };
 
 export const update: RequestHandler = async (req, res, next) => {
-  const user: User = req.body;
+  const room: Room = req.body;
   const id = req.params.id;
 
   try {
-    await prisma.user.update({
+    await prisma.room.update({
       where: {
         id: id
       },
-      data: user
+      data: room
     });
   } catch (e) {
     console.error(e);
@@ -46,23 +46,41 @@ export const update: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const deleteUser: RequestHandler = async (req, res, next) => {
+export const deleteRoom: RequestHandler = async (req, res, next) => {
   const id = req.params.id;
 
   try {
     const deleteRoomOnUsers = prisma.roomsOnUsers.deleteMany({
       where: {
-        userId: id
+        roomId: id
       }
     });
 
-    const deleteUser = prisma.user.delete({
+    const deleteRoom = prisma.room.delete({
       where: {
         id: id
       }
     });
 
-    await prisma.$transaction([deleteRoomOnUsers, deleteUser]);
+    await prisma.$transaction([deleteRoomOnUsers, deleteRoom]);
+  } catch (e) {
+    console.error(e);
+    res.sendStatus(500) && next(e);
+  }
+};
+
+export const getMessages: RequestHandler = async (req, res, next) => {
+  type Room = Prisma.RoomGetPayload<{ include: { messages: true } }>;
+
+  const roomId = req.params.roomId;
+  try {
+    const room = (await prisma.room.findUnique({
+      where: {
+        id: roomId
+      }
+    })) as Room | null;
+
+    return room?.messages;
   } catch (e) {
     console.error(e);
     res.sendStatus(500) && next(e);

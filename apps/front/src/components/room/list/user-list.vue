@@ -1,9 +1,4 @@
-<script setup>
-import { useSocket } from '@/hooks/useSocket';
-import { DEFAULT_ROOMS } from '@/utils/constants';
-
-const { socket } = useSocket();
-</script>
+<script setup></script>
 
 <template>
   <aside class="user-list">

@@ -1,14 +1,12 @@
 <script lang="ts" setup>
-import Message from '@/models/Message.js';
-import { SupervisorMessage } from '@/types/app.js';
-import { format, Locale, isAfter, isToday } from 'date-fns';
+import { Message } from '@/types/app.js';
+import { format, isToday } from 'date-fns';
 import { useStore } from '@/hooks/useStore';
 import { computed, ref } from 'vue';
 import { vHoverChangeNotify } from '@/directives/index';
-import User from '@/models/User.js';
 
 interface Props {
-  message: Message & SupervisorMessage;
+  message: Message;
   index: number;
 }
 
@@ -20,23 +18,26 @@ const isHovering = (bool: boolean) => {
 };
 
 const messageDate = computed(() => {
-  if (isToday(new Date(props.message.created)))
-    return `Aujourd'hui à ${format(new Date(props.message.created), 'HH:hh')}`;
+  if (isToday(new Date(props.message.dateCreated)))
+    return `Aujourd'hui à ${format(
+      new Date(props.message.dateCreated),
+      'HH:hh'
+    )}`;
 
-  return format(new Date(props.message.created), 'dd/mm/yyyy');
+  return format(new Date(props.message.dateCreated), 'dd/mm/yyyy');
 });
 
 const isAvatarDisplayed = computed(() => {
   if (!store.currentRoomMessages || props.index === 0) return true;
   if (
-    !store.currentRoomMessages[props.index - 1].author ||
-    !props.message.author
+    !store.currentRoomMessages[props.index - 1].authorId ||
+    !props.message.authorId
   )
     return true;
 
   const lastMessageIsMine =
-    store.currentRoomMessages[props.index - 1].author.username ===
-    props.message.author.username;
+    store.currentRoomMessages[props.index - 1].author?.id ===
+    props.message.author?.id;
 
   if (!lastMessageIsMine) return true;
 
@@ -50,10 +51,9 @@ const isAvatarDisplayed = computed(() => {
     v-hover-change-notify="isHovering"
     class="message-layout--user"
   >
-    <!-- {{ isAvatarDisplayed }} -->
     <avatar v-if="isAvatarDisplayed" class="avatar" :user="message.author" />
     <span v-else-if="!isAvatarDisplayed && displayHours" class="hours">
-      {{ format(new Date(props.message.created), 'HH:hh') }}
+      {{ format(new Date(props.message.dateCreated), 'HH:hh') }}
     </span>
 
     <div class="content">

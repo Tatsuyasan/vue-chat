@@ -1,14 +1,12 @@
-import {
-  Prisma,
-  User as UserPrisma,
-  Message as MessagePrisma
-} from '@prisma/client';
+import { Prisma, User as UserPrisma } from '@prisma/client';
+
+export type Message = Prisma.MessageGetPayload<{
+  include: { author: true };
+}>;
 
 export type Room = Prisma.RoomGetPayload<{
   include: { messages: true; users: true };
 }>;
-
-export type Message = MessagePrisma;
 
 export type User = UserPrisma;
 

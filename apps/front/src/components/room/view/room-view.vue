@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import { useStore } from '@/hooks/useStore';
-import Message from '@/models/Message';
+import { Message } from '@/types/app';
+import { nanoid } from 'nanoid';
 
 const store = useStore();
 
@@ -13,13 +14,18 @@ const submit = () => {
   if (!currentUser || !currentRoom || !messageTrimed) return;
 
   try {
-    const message = new Message({
-      author: currentUser,
-      content: messageTrimed
-    });
-    const roomId = currentRoom.id;
+    const message: Message = {
+      id: nanoid(),
+      content: messageTrimed,
+      roomId: currentRoom.id,
+      authorId: currentUser.id,
+      dateCreated: new Date(),
+      author: currentUser
+    };
 
-    fetch(`http://localhost:5001/api/message/${roomId}`, {
+    console.log('message ==> ', message);
+
+    fetch(`http://localhost:5001/api/message/${message.roomId}`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
