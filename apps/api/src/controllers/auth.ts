@@ -9,28 +9,25 @@ import {
 } from '../services/auth';
 import { UserDto } from 'types';
 import { errorHandler } from '../services/errorHandler';
+import { createUser, findUserByEmail, updateUserById } from '../services/user';
 
 export const register: RequestHandler = async (req, res, next) => {
-  const { password, email, username }: User = req.body;
-  //access: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjRhMmQ0NDhlLWNjNzEtNDViMC1iODdiLTdiZDY4NzNiY2ZhNSIsImlhdCI6MTY2MDMwNTUxMCwiZXhwIjoxNjYwMzA1ODEwfQ.QzUtO_Ytuh5XWSnbLdYqGlI1z3d5ZmlIpGWsbB5OWOk
-  //refresh: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAzNGNkZTMxLTA5ODctNDNmOS05OGI3LTJmMzRjZTFkZjJlMSIsImlhdCI6MTY2MDMwNTUxMCwiZXhwIjoxNjYwOTEwMzEwfQ.l_vVP4fdDXGijUk5XqWw2MeoJ-SGpGuQ3GMvHa7eZrw
+  const { password, email, username } = req.body;
+
   try {
-    if (!password) throw new Error();
+    if (!password || !email || !username) throw new Error();
 
     const passwordHash = generateHashedPassword(password);
 
-    const user = await prisma.user.create({
-      data: {
-        password: passwordHash,
-        email: email,
-        socketId: null,
-        username: username
-      }
-    });
+    const userCreated = await createUser({
+      password: passwordHash,
+      email: email,
+      username: username
+    } as User);
 
-    const { accessToken, refreshToken } = generateTokens(user.id);
+    const { accessToken, refreshToken } = generateTokens(userCreated.id);
 
-    const userDto: UserDto = user;
+    const userDto: UserDto = userCreated;
 
     delete userDto.password;
 
@@ -49,11 +46,7 @@ export const login: RequestHandler = async (req, res, next) => {
   const { email, password }: User = req.body;
 
   try {
-    const user = await prisma.user.findUnique({
-      where: {
-        email
-      }
-    });
+    const user = await findUserByEmail(email);
 
     if (!user) {
       throw errorHandler.notFound('User not found');
@@ -65,17 +58,15 @@ export const login: RequestHandler = async (req, res, next) => {
 
     const { accessToken, refreshToken } = generateTokens(user.id);
 
-    const userDto: UserDto = await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        refreshToken
-      }
+    const userUpdated: UserDto = await updateUserById({
+      id: user.id,
+      refreshToken
     });
 
-    delete userDto.password;
+    delete userUpdated.password;
 
     res.status(200).json({
-      ...userDto,
+      ...userUpdated,
       accessToken,
       refreshToken
     });
