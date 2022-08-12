@@ -1,7 +1,7 @@
 import { Message } from '@prisma/client';
 import prisma from '../prisma/prisma';
 import { RequestHandler } from 'express';
-import { io } from '../services/WebSocket';
+import { io } from '../services/webSocket';
 import { SOCKET_EVENT } from 'shared';
 
 export const create: RequestHandler = async (req, res, next) => {

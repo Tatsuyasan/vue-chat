@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyToken } from 'controllers/auth';
+import { verifyTokenMiddleware } from '../services/auth';
 import {
   read,
   getMessages,
@@ -12,7 +12,7 @@ const router = express.Router();
 
 router
   .route('/:id')
-  .all(verifyToken)
+  .all(verifyTokenMiddleware)
   .get(read)
   .get(getMessages)
   .post(create)

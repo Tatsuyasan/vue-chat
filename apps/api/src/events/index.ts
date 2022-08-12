@@ -1,7 +1,7 @@
 import roomHandler from './roomHandler';
 import disconnectHandler from './disconnectHandler';
 import { SOCKET_EVENT } from 'shared';
-import { on } from '../services/WebSocket';
+import { on } from '../services/webSocket';
 import { SocketEventFn } from '../types';
 
 const register: SocketEventFn = (socket, io) => {

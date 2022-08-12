@@ -1,14 +1,14 @@
 import express from 'express';
-import { verifyToken } from 'controllers/auth';
+import { verifyTokenMiddleware } from '../services/auth';
 import { create, deleteMessage, update } from '../controllers/message';
 
 const router = express.Router();
 
-router.route('/:roomId').all(verifyToken).post(create);
+router.route('/:roomId').all(verifyTokenMiddleware).post(create);
 
 router
   .route('/:roomId/:messageId')
-  .all(verifyToken)
+  .all(verifyTokenMiddleware)
   .put(update)
   .delete(deleteMessage);
 

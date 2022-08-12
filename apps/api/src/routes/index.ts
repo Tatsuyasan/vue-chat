@@ -5,7 +5,9 @@ import prisma from '../prisma/prisma';
 import userRoutes from './user';
 import roomRoutes from './room';
 import messageRoutes from './message';
+import authRoutes from './auth';
 
+router.use('/auth', authRoutes);
 router.use('/user', userRoutes);
 router.use('/room', roomRoutes);
 router.use('/message', messageRoutes);

@@ -16,18 +16,7 @@ export const read: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const create: RequestHandler = async (req, res, next) => {
-  const user: User = req.body;
 
-  try {
-    await prisma.user.create({
-      data: user
-    });
-  } catch (e) {
-    console.error(e);
-    res.sendStatus(500) && next(e);
-  }
-};
 
 export const update: RequestHandler = async (req, res, next) => {
   const user: User = req.body;
