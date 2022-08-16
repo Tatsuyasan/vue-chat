@@ -16,3 +16,11 @@ export type PrivateRoomOptions = {
   users: User[];
   messages: Message[];
 };
+
+export type LoginUserDto = { email: string; password: string };
+
+export type RegisterUserDto = {
+  username: string;
+  password: string;
+  email: string;
+};

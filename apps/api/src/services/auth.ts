@@ -1,9 +1,17 @@
+import { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
-import { RequestHandler } from 'express';
+import { RequestHandler, Response } from 'express';
 import jwt, { JwtPayload, Secret, SignOptions } from 'jsonwebtoken';
-import { Uid } from 'types';
+import { decodedJWT, Uid, UserPartial } from 'types';
+import config from '../../config';
 import { errorHandler } from './errorHandler';
+import {
+  createUser,
+  findUserByEmail,
+  findUserById,
+  updateUserById
+} from './user';
 
 const jwtSecretKey = process.env.JWT_SECRET_KEY as Secret;
 
@@ -36,7 +44,7 @@ export const verifyToken = (token: string) => {
 
 export const generateAccessToken = (
   payload: Uid,
-  options: SignOptions = { expiresIn: '5m' }
+  options: SignOptions = { expiresIn: config.JWT.EXPIRE_IN }
 ) => {
   return jwt.sign({ id: payload }, jwtSecretKey, options);
 };
@@ -48,7 +56,7 @@ export const generateRefreshToken = () => {
     },
     jwtSecretKey,
     {
-      expiresIn: '7d'
+      expiresIn: config.REFRESH_TOKEN.EXPIRE_IN
     }
   );
 };
@@ -65,4 +73,72 @@ export const generateTokens = (payload: string) => {
     accessToken,
     refreshToken
   };
+};
+
+export const authService = {
+  login: async ({ email, password }: User) => {
+    const user = await findUserByEmail(email);
+    if (!user) throw errorHandler.notFound('User not found');
+
+    const isMatch = await verifyPassword(password, user.password);
+    if (!isMatch) throw errorHandler.unAuthorized();
+
+    const { accessToken, refreshToken } = generateTokens(user.id);
+
+    await updateUserById({
+      id: user.id,
+      refreshToken
+    });
+
+    return { accessToken, refreshToken };
+  },
+  register: async ({ password, email, username }: User) => {
+    if (!password || !email || !username) throw new Error();
+
+    const passwordHash = generateHashedPassword(password);
+
+    const userCreated = await createUser({
+      password: passwordHash,
+      email: email,
+      username: username
+    } as User);
+
+    const { accessToken, refreshToken } = generateTokens(userCreated.id);
+
+    await updateUserById({
+      id: userCreated.id,
+      refreshToken
+    });
+
+    return accessToken;
+  },
+  refreshToken: async ({ refreshToken }: User) => {
+    if (!refreshToken) throw new Error('Missing refresh token.');
+
+    const decoded = await verifyToken(refreshToken);
+    const hasUserId = (decoded: any): decoded is JwtPayload =>
+      'userId' in decoded;
+    if (!hasUserId(decoded)) throw new Error('Token is corrupted');
+
+    const user = await findUserById(decoded.id);
+    if (!user) throw errorHandler.unAuthorized();
+
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(
+      user.id
+    );
+
+    await updateUserById({ id: user.id, refreshToken: newRefreshToken });
+
+    return { accessToken, newRefreshToken };
+  },
+
+  setCookie: (res: Response, value: string) => {
+    res.cookie('refresh_token', value, {
+      path: config.COOKIE.PATH,
+      secure: config.COOKIE.SECURE,
+      sameSite: config.COOKIE.SAMESITE,
+      maxAge: config.COOKIE.MAXAGE,
+      httpOnly: config.COOKIE.HTTPONLY
+    });
+  }
 };

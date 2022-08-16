@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
 import { ref, computed, ComputedRef } from 'vue';
 import { useCookies } from '@vueuse/integrations/useCookies';
-import { Message, Room, User } from '@/types/app';
+import { LoginUserDto, Message, Room, User } from '@/types/app';
 import { nanoid } from 'nanoid';
+import { authService } from '@/services/auth';
 
 const userCookies = useCookies(['username']);
 
@@ -29,22 +30,8 @@ export const useStore = defineStore('app', () => {
     selectedRoomId.value = roomId;
   };
 
-  const login = ({ username, socketId, id }: User) => {
-    user.value = { username, socketId, id };
-    console.log('user.value ==> ', user.value);
-    userCookies.set('username', user.value);
-    try {
-      fetch(`http://localhost:5001/api/user`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(user.value)
-      });
-    } catch (error) {
-      console.error(error);
-    }
+  const login = async (data: LoginUserDto) => {
+    authService.login(data);
   };
 
   const logout = () => {

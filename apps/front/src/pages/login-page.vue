@@ -2,29 +2,26 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from '@/hooks/useStore';
-import { useSocket } from '@/hooks/useSocket';
-import { User } from '@/types/app';
-import { nanoid } from 'nanoid';
-
-const socket = useSocket();
-const { connect } = useSocket();
 
 const store = useStore();
 const router = useRouter();
 
 const { login } = store;
-const username = ref('');
+const email = ref('');
+const password = ref('');
 
-const goToChatPage = () => {
-  const user: User = {
-    id: nanoid(),
-    username: username.value,
-    socketId: socket.socket.id
-  };
+const submitLogin = async () => {
+  try {
+    const user = {
+      email: email.value,
+      password: password.value
+    };
+    await login(user);
 
-  login(user);
-  socket.connect();
-  router.replace({ name: 'ChatPage' });
+    router.replace({ name: 'ChatPage' });
+  } catch (e) {
+    console.error(e);
+  }
 };
 </script>
 
@@ -34,20 +31,29 @@ const goToChatPage = () => {
       <section-provider>
         <section-heading class="mb-10">Connectez vous ...</section-heading>
 
-        <form @submit.prevent="goToChatPage()">
+        <form @submit.prevent="submitLogin()">
           <input-text
-            v-model="username"
+            v-model="email"
             class="mb-4"
             name="name"
-            placeholder="Pseudo"
+            placeholder="email"
             required
             type="text"
-            @keypress.enter="goToChatPage()"
+            @keypress.enter="submitLogin()"
+          />
+          <input-text
+            v-model="password"
+            class="mb-4"
+            name="name"
+            placeholder="Mot de passe"
+            required
+            type="password"
+            @keypress.enter="submitLogin()"
           />
           <div class="flex justify-center">
             <button
               class="bg-green-600 cursor-pointer hover:bg-green-700 p-y-2 p-x-4 no-underline"
-              :disabled="!!store.user"
+              :disabled="!email || !password"
               :to="{ name: 'ChatPage' }"
               type="submit"
             >
