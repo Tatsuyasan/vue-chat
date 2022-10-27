@@ -1,5 +1,5 @@
 <script setup>
-import { DEFAULT_ROOMS } from '@/utils/constants';
+import { DEFAULT_ROOMS } from 'shared';
 </script>
 
 <template>
@@ -8,11 +8,15 @@ import { DEFAULT_ROOMS } from '@/utils/constants';
       <li
         v-for="room in DEFAULT_ROOMS"
         :key="room"
-        class="p-3 cursor-pointer hover:bg-gray-300"
+        class="room-list-item cursor-pointer hover:bg-gray-300"
       >
         {{ room }}
       </li>
     </ul>
   </aside>
 </template>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.room-list-item {
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+</style>

@@ -1,16 +1,13 @@
 import { defineStore } from 'pinia';
 import { ref, computed, ComputedRef } from 'vue';
-import { useCookies } from '@vueuse/integrations/useCookies';
-import { LoginUserDto, Message, Room, User } from '@/types/app';
+import { Message, Room, User } from '@/types/app';
 import { nanoid } from 'nanoid';
-import { authService } from '@/services/auth';
-
-const userCookies = useCookies(['username']);
 
 export const useStore = defineStore('app', () => {
   const user = ref<User>();
   const selectedRoomId = ref<string>();
   const rooms = ref<Room[]>([]);
+  const socketId = ref<string>('');
 
   const getRoomById = (id: string) => rooms.value.find((c) => c.id === id);
 
@@ -30,16 +27,13 @@ export const useStore = defineStore('app', () => {
     selectedRoomId.value = roomId;
   };
 
-  const login = async (data: LoginUserDto) => {
-    authService.login(data);
-  };
-
-  const logout = () => {
-    userCookies.remove('username');
-  };
-
   const addRoom = (room: Room) => {
+    console.log(room);
     rooms.value.push(room);
+  };
+
+  const setUser = (userPrm: User) => {
+    user.value = userPrm;
   };
 
   const addPrivateRoom = (room: Room) => {
@@ -74,6 +68,7 @@ export const useStore = defineStore('app', () => {
     user,
     selectedRoomId,
     rooms,
+    socketId,
 
     // getters
     currentRoom,
@@ -82,8 +77,7 @@ export const useStore = defineStore('app', () => {
 
     // actions
     selectRoom,
-    login,
-    logout,
+    setUser,
     addRoom,
     removeRoom,
     getRoomById,

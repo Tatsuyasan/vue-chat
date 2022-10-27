@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import path from 'path';
-// import { isProd, constants } from '@c4/shared';
 dotenv.config({
   path: path.resolve(process.cwd(), `.env.${process.env.NODE_ENV}`)
 });
@@ -9,6 +8,7 @@ const isProd = process.env.NODE_ENV === 'production';
 
 export default {
   PORT: parseInt(process.env.PORT as string) || 8888,
+  FRONT_BASE_URL: process.env.FRONT_BASE_URL,
 
   COOKIE: {
     PATH: '/',

@@ -3,17 +3,19 @@ import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { RequestHandler, Response } from 'express';
 import jwt, { JwtPayload, Secret, SignOptions } from 'jsonwebtoken';
-import { decodedJWT, Uid, UserPartial } from 'types';
+import { LoginUserDto, RegisterUserDto } from 'shared';
+import { Uid } from 'types';
 import config from '../../config';
 import { errorHandler } from './errorHandler';
+import prisma from '../prisma/prisma';
 import {
   createUser,
   findUserByEmail,
-  findUserById,
+  findUserByRefreshToken,
   updateUserById
 } from './user';
 
-const jwtSecretKey = process.env.JWT_SECRET_KEY as Secret;
+const jwtSecretKey = config.JWT.SECRET as Secret;
 
 export const verifyPassword = (candidatePassword: string, password: string) => {
   return bcrypt.compare(candidatePassword, password);
@@ -25,13 +27,16 @@ export const verifyTokenMiddleware: RequestHandler = async (req, res, next) => {
   try {
     if (!token) throw new Error('No token provided.');
 
-    const { id } = (await verifyToken(token)) as JwtPayload;
+    const plainToken = token.replace('Bearer ', '');
 
-    const user = await prisma.user.findUnique({ where: { id: id } });
+    const decoded = await verifyToken(plainToken);
+
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
 
     if (!user) throw errorHandler.notFound('User not found');
 
     req.user = user;
+    next();
   } catch (e) {
     console.error(e);
     next(e);
@@ -39,7 +44,7 @@ export const verifyTokenMiddleware: RequestHandler = async (req, res, next) => {
 };
 
 export const verifyToken = (token: string) => {
-  return jwt.verify(token, jwtSecretKey);
+  return jwt.verify(token, jwtSecretKey) as JwtPayload;
 };
 
 export const generateAccessToken = (
@@ -76,7 +81,7 @@ export const generateTokens = (payload: string) => {
 };
 
 export const authService = {
-  login: async ({ email, password }: User) => {
+  login: async ({ email, password }: LoginUserDto) => {
     const user = await findUserByEmail(email);
     if (!user) throw errorHandler.notFound('User not found');
 
@@ -85,14 +90,17 @@ export const authService = {
 
     const { accessToken, refreshToken } = generateTokens(user.id);
 
-    await updateUserById({
+    console.log();
+
+    const userUpdated = await updateUserById({
       id: user.id,
       refreshToken
     });
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, user: userUpdated };
   },
-  register: async ({ password, email, username }: User) => {
+
+  register: async ({ password, email, username }: RegisterUserDto) => {
     if (!password || !email || !username) throw new Error();
 
     const passwordHash = generateHashedPassword(password);
@@ -112,15 +120,13 @@ export const authService = {
 
     return accessToken;
   },
-  refreshToken: async ({ refreshToken }: User) => {
+
+  refreshToken: async (refreshToken: string) => {
     if (!refreshToken) throw new Error('Missing refresh token.');
 
-    const decoded = await verifyToken(refreshToken);
-    const hasUserId = (decoded: any): decoded is JwtPayload =>
-      'userId' in decoded;
-    if (!hasUserId(decoded)) throw new Error('Token is corrupted');
+    await verifyToken(refreshToken);
 
-    const user = await findUserById(decoded.id);
+    const user = await findUserByRefreshToken(refreshToken);
     if (!user) throw errorHandler.unAuthorized();
 
     const { accessToken, refreshToken: newRefreshToken } = generateTokens(

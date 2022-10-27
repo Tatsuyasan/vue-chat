@@ -8,6 +8,7 @@ export const useSocket = () => {
   return {
     socket: socket,
     connect: () => {
+      console.log('socket connection');
       return socket.connect();
     },
     disconnect: () => {

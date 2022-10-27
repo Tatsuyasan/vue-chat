@@ -1,13 +1,44 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router';
 import { useStore } from '@/hooks/useStore';
+import { onBeforeUnmount, onMounted, watch } from 'vue';
+import { authService } from './services/api/auth';
+import { useJwt } from './hooks/useJwt';
+import { userService } from './services/api/user';
 
 const router = useRouter();
 const store = useStore();
+const { jwt, decodedJwt } = useJwt();
 
 if (!store.currentUser) {
-  router.replace({ name: 'LoginPage' });
+  router.replace({ name: 'AuthPage' });
 }
+
+onMounted(async () => {
+  if (jwt.value) return;
+  try {
+    await authService.refreshToken();
+    const { user } = await userService.getCurrentUser();
+    store.setUser(user);
+  } catch (e) {
+    throw new Error('Custom error : Token has expired');
+  }
+});
+
+let refreshTimeout: any = undefined;
+const startRefreshTimeout = () => {
+  if (import.meta.env.SSR) return;
+  clearTimeout(refreshTimeout as number);
+
+  const expirationTimeout = decodedJwt.value.exp * 1000 - new Date().getTime();
+  refreshTimeout = setTimeout(async () => {
+    await authService.refreshToken();
+  }, expirationTimeout - 30_000); // refresh token 30 secondes before it expores
+};
+
+watch(jwt, () => {
+  startRefreshTimeout();
+});
 </script>
 
 <template>
@@ -20,7 +51,7 @@ if (!store.currentUser) {
 
 <style lang="scss">
 html {
-  font-family: 'Noto, Helvetica, Arial, sans-serif';
+  font-family: var(--font-family);
 }
 
 :root {
@@ -60,6 +91,8 @@ html {
   --spacing-xl: calc(2.5 * var(--spacing-unit));
   --spacing-xxl: calc(5 * var(--spacing-unit));
   --spacing-3xl: calc(7.5 * var(--spacing-unit));
+
+  --font-family: 'Noto, Helvetica, Arial, sans-serif';
 }
 
 *,

@@ -1,27 +1,43 @@
+import { defaultRooms, SOCKET_EVENT } from 'shared';
 import { Server, Socket } from 'socket.io';
-type Callback = (socket: Socket, io: Server) => void;
-type SocketListener = (socket: Socket, io: Server) => void;
+import http from 'http';
+type SocketListenerArgs<T> = {
+  socket: Socket;
+  io: Server;
+  payload: T;
+};
+export type SocketListener<T = unknown> = (arg: SocketListenerArgs<T>) => void;
 
-const listeners = new Map<string, SocketListener[]>();
+const listeners = new Map<string, SocketListener<any>[]>();
 const io = new Server({
   cors: { origin: '*', methods: ['GET', 'POST'] }
 });
 
-io.on('connection', (socket: Socket) => attachListeners(socket));
-
 const attachListeners = (socket: Socket) => {
   [...listeners.entries()].forEach(([eventName, listeners]) => {
-    socket.on(eventName, () => {
-      listeners.forEach(listener => listener(socket, io));
+    socket.on(eventName, payload => {
+      listeners.forEach(listener => listener({ socket, io, payload }));
     });
   });
 };
 
-const on = (eventName: string, callback: Callback) => {
+const attachServer = (httpServer: http.Server) => {
+  io.attach(httpServer);
+};
+
+const on = <T = unknown>(eventName: string, callback: SocketListener<T>) => {
   if (!listeners.has(eventName)) listeners.set(eventName, []);
-  console.log('listeners ==> ', listeners);
 
   listeners.get(eventName)?.push(callback);
 };
 
-export { io, on };
+io.on(SOCKET_EVENT.CONNECTION, socket => {
+  console.log('connected :', socket.id);
+  defaultRooms.map(r => {
+    socket.join(r.id);
+  });
+
+  attachListeners(socket);
+});
+
+export { io, on, attachServer };

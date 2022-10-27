@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { User } from 'shared';
 import { Uid } from 'types';
 import prisma from '../prisma/prisma';
 
@@ -20,10 +20,36 @@ export const findUserByEmail = async (email: string) => {
     }
   });
 };
+
 export const findUserById = async (id: Uid) => {
   return await prisma.user.findUnique({
     where: {
       id
+    }
+  });
+};
+
+export const findUserByRefreshToken = async (refreshToken: string) => {
+  return await prisma.user.findUnique({
+    where: {
+      refreshToken: refreshToken
+    }
+  });
+};
+
+export const findUserBySocketId = async (socketId: Uid) => {
+  return await prisma.user.findUnique({
+    where: {
+      socketId: socketId
+    }
+  });
+};
+
+export const resetSocketId = async (id: Uid) => {
+  return await prisma.user.update({
+    where: { id },
+    data: {
+      socketId: null
     }
   });
 };

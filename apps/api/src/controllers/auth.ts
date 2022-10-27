@@ -3,7 +3,11 @@ import { authService } from '../services/auth';
 
 export const register: RequestHandler = async (req, res, next) => {
   try {
-    const accessToken = await authService.register(req.body);
+    await authService.register(req.body);
+
+    const { accessToken, refreshToken } = await authService.login(req.body);
+
+    authService.setCookie(res, refreshToken);
 
     res.status(201).json({
       accessToken
@@ -16,11 +20,14 @@ export const register: RequestHandler = async (req, res, next) => {
 
 export const login: RequestHandler = async (req, res, next) => {
   try {
-    const { accessToken, refreshToken } = await authService.login(req.body);
+    const { accessToken, refreshToken, user } = await authService.login(
+      req.body
+    );
 
     authService.setCookie(res, refreshToken);
 
     res.status(200).json({
+      ...user,
       accessToken
     });
   } catch (e) {
@@ -31,10 +38,12 @@ export const login: RequestHandler = async (req, res, next) => {
 export const refreshToken: RequestHandler = async (req, res, next) => {
   try {
     const { accessToken, newRefreshToken } = await authService.refreshToken(
-      req.body
+      req.cookies.refresh_token
     );
 
-    return res.status(200).json({ accessToken, newRefreshToken });
+    authService.setCookie(res, newRefreshToken);
+
+    return res.status(200).json({ accessToken });
   } catch (err) {
     next(err);
   }

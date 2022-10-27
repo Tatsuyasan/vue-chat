@@ -2,7 +2,7 @@ import express from 'express';
 import { verifyTokenMiddleware } from '../services/auth';
 import {
   read,
-  getMessages,
+  messages,
   create,
   update,
   deleteRoom
@@ -14,9 +14,10 @@ router
   .route('/:id')
   .all(verifyTokenMiddleware)
   .get(read)
-  .get(getMessages)
   .post(create)
   .put(update)
   .delete(deleteRoom);
+
+router.route('/:id/messages').get(messages);
 
 export default router;

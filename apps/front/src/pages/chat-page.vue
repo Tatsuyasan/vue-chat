@@ -1,15 +1,27 @@
 <script lang="ts" setup>
 import { useStore } from '@/hooks/useStore.js';
-import { useRooms } from '@/hooks/useRooms.js';
 import { onMounted } from 'vue';
-import { defaultRoom, DEFAULT_ROOMS } from '@/utils/constants';
+import { defaultRooms, DEFAULT_ROOMS } from 'shared';
+import { userService } from '@/services/api/user';
+import { roomService } from '@/services/api/room';
 
 const store = useStore();
-const { add } = useRooms();
 
-onMounted(() => {
-  add(defaultRoom);
-  store.selectRoom(DEFAULT_ROOMS.PUBLIC);
+onMounted(async () => {
+  try {
+    defaultRooms.map(async (r) => {
+      await userService.connectUserToRoom(r.id);
+      const room = await roomService.getRoom(r.id);
+      const messages = await roomService.getMessages(room.id);
+      room.messages = messages;
+
+      store.addRoom(room);
+    });
+
+    store.selectRoom(DEFAULT_ROOMS.PUBLIC);
+  } catch (e) {
+    console.error(e);
+  }
 });
 </script>
 

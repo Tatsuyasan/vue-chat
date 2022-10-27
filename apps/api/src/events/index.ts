@@ -1,14 +1,10 @@
 import roomHandler from './roomHandler';
 import disconnectHandler from './disconnectHandler';
-import { SOCKET_EVENT } from 'shared';
+import { Socket } from 'socket.io';
 import { on } from '../services/webSocket';
-import { SocketEventFn } from '../types';
+import { SOCKET_EVENT } from 'shared';
 
-const register: SocketEventFn = (socket, io) => {
-  console.log('register / connection ON');
-  roomHandler(socket, io);
-  disconnectHandler(socket, io);
+export const initSocketEvents = () => {
+  // roomHandler();
+  disconnectHandler();
 };
-
-export const initSocketEvents = () =>
-  on(SOCKET_EVENT.CONNECTION, (socket, io) => register(socket, io));

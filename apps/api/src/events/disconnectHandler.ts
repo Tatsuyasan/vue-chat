@@ -1,16 +1,22 @@
+import { on, SocketListener } from '../services/webSocket.js';
 import { SOCKET_EVENT } from 'shared';
-import { SocketEventFn } from '../types/index.js';
+import { findUserBySocketId, resetSocketId } from '../services/user.js';
 
-const disconnectHandler: SocketEventFn = socket => {
-  const disconnect = () => {
-    console.log('disconnected');
+const disconnectHandler = () => {
+  const disconnect: SocketListener = async ({ socket }) => {
+    console.log('disconnect :', socket.id);
+    const user = await findUserBySocketId(socket.id);
+    if (!user) return;
+
+    await resetSocketId(user.id);
   };
 
-  const disconnecting = () => {
+  const disconnecting: SocketListener = async () => {
     console.log('disconnecting........');
   };
-  socket.on(SOCKET_EVENT.DISCONNECT, disconnect);
-  socket.on(SOCKET_EVENT.DISCONNECTING, disconnecting);
+
+  on(SOCKET_EVENT.DISCONNECT, disconnect);
+  on(SOCKET_EVENT.DISCONNECTING, disconnecting);
 };
 
 export default disconnectHandler;

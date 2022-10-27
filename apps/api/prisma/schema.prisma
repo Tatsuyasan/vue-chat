@@ -17,17 +17,17 @@ model User {
   username     String  @db.VarChar(255)
   email        String  @unique
   password     String
-  socketId     String? @db.VarChar(255)
+  socketId     String? @unique @db.VarChar(255)
   refreshToken String? @unique
 
-  Rooms   RoomsOnUsers[]
-  Message Message[]
+  rooms   RoomsOnUsers[]
+  Message Message[]      @relation("MessagesAuthor")
 }
 
 model Room {
   id       String    @id @default(uuid())
   name     String    @db.VarChar(255)
-  messages Message[]
+  messages Message[] @relation("MessagesRoom")
 
   users RoomsOnUsers[]
 }
@@ -46,9 +46,10 @@ model Message {
   id          String   @id @default(uuid())
   content     String   @db.VarChar(255)
   dateCreated DateTime @default(now())
-  author      User?    @relation(fields: [authorId], references: [id])
 
-  Room     Room    @relation(fields: [roomId], references: [id])
+  author User? @relation("MessagesAuthor", fields: [authorId], references: [id])
+  room   Room  @relation("MessagesRoom", fields: [roomId], references: [id])
+
   roomId   String
   authorId String?
 }

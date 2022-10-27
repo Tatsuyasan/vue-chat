@@ -9,10 +9,10 @@
     "dev": "rollup -w  --config rollup.config.js"
   },
   "devDependencies": {
-    "@zerollup/ts-transform-paths": "^1.7.18",
-    "ttypescript": "^1.5.13",
     "@rollup/plugin-typescript": "^8.2.5",
+    "@zerollup/ts-transform-paths": "^1.7.18",
     "rollup": "^2.56.3",
+    "ttypescript": "^1.5.13",
     "typescript": "^4.3.5"
   }
 }

@@ -7,7 +7,11 @@ const { createUserMessageToCurrentRoom, createAutoMessageToCurrentRoom } =
   useStore();
 
 export const webSocketListeners = (socket: Socket) => {
+  console.log('webSocketListeners');
   const roomHasNewMessage = (message: Message) => {
+    console.log('emit from ');
+    console.log('PING ||||| PING');
+    console.log('message ==> ', message);
     createUserMessageToCurrentRoom(message);
   };
 

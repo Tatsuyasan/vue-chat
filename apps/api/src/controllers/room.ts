@@ -5,11 +5,15 @@ import { RequestHandler } from 'express';
 export const read: RequestHandler = async (req, res, next) => {
   const id = req.params.id;
   try {
-    await prisma.room.findUnique({
+    const room = await prisma.room.findUnique({
       where: {
         id: id
+      },
+      include: {
+        users: true
       }
     });
+    res.status(200).json(room);
   } catch (e) {
     console.error(e);
     res.sendStatus(500) && next(e);
@@ -23,6 +27,7 @@ export const create: RequestHandler = async (req, res, next) => {
     await prisma.room.create({
       data: room
     });
+    res.sendStatus(201);
   } catch (e) {
     console.error(e);
     res.sendStatus(500) && next(e);
@@ -40,6 +45,7 @@ export const update: RequestHandler = async (req, res, next) => {
       },
       data: room
     });
+    res.sendStatus(200);
   } catch (e) {
     console.error(e);
     res.sendStatus(500) && next(e);
@@ -63,24 +69,36 @@ export const deleteRoom: RequestHandler = async (req, res, next) => {
     });
 
     await prisma.$transaction([deleteRoomOnUsers, deleteRoom]);
+
+    res.sendStatus(200);
   } catch (e) {
     console.error(e);
     res.sendStatus(500) && next(e);
   }
 };
 
-export const getMessages: RequestHandler = async (req, res, next) => {
+export const messages: RequestHandler = async (req, res, next) => {
   type Room = Prisma.RoomGetPayload<{ include: { messages: true } }>;
 
-  const roomId = req.params.roomId;
+  const roomId = req.params.id;
   try {
     const room = (await prisma.room.findUnique({
       where: {
         id: roomId
+      },
+      include: {
+        messages: {
+          include: {
+            author: true
+          },
+          orderBy: {
+            dateCreated: 'desc'
+          }
+        }
       }
-    })) as Room | null;
+    })) as Room;
 
-    return room?.messages;
+    res.status(200).json({ messages: room.messages });
   } catch (e) {
     console.error(e);
     res.sendStatus(500) && next(e);

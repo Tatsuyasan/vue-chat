@@ -1,12 +1,12 @@
 import { Prisma, User as UserPrisma } from '@prisma/client';
-import { AxiosInstance } from 'axios';
 
-export type Callback = (cb: () => void) => void;
+export type LoginUserDto = { email: string; password: string };
 
-export type AxiosContext = {
-  axios: AxiosInstance;
-  onRequest: Callback;
-  onResponse: Callback;
+export type RegisterUserDto = {
+  username: string;
+  password: string;
+  email: string;
+  confirmPassword: string;
 };
 
 export type Message = Prisma.MessageGetPayload<{
